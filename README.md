@@ -6,4 +6,4 @@ https://github.com/Emotiv/community-sdk
 
 The C++ script found in community-sdk-master/examples_basic/C++/MentalCommandWithLocalProfile/ was modified to expose some APIs and compiled into a DLL file using Visual Studio
 
-This DLL was then used in a python script (used to bridge the EEG processing done on the (Windows) PC, with the motor actuation on an Arduino 
+This DLL was then used in a python script used to bridge the EEG processing done on the (Windows) PC, with the motor actuation on an Arduino 
