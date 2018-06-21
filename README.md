@@ -1,0 +1,2 @@
+# BCI-with-Emotiv
+The objective is to create a system where in which any motor driven structure (say, a prosthetic arm) can be controlled using EEG signals. The headset used was the EMOTIV EPOC, along with the supplied SDK. Since at the time of this commit, there is no support for Mental Command with Local Profile with Python or sufficient linux support, this implementation uses the local profile implementation on c++ and uses python to create a bridge between processing on the host PC and actuation on the arduino 
