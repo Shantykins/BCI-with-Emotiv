@@ -14,21 +14,19 @@
 #include <string>
 #include <map>
 #include <cassert>
-#include <dlfcn.h>
-#include <stdlib.h>
+//#include <libusb.h>
 #undef UNICODE
+
 #ifdef _WIN32
     #include <conio.h>
     #include <windows.h>
 #endif
 
+#define DLLEXPORT extern "C" __declspec(dllexport)
 #if __linux__ || __APPLE__
 #include <unistd.h>
 int _kbhit(void);
 #endif
-
-#define EXIT_FAILURE 1
-
 
 #include "IEmoStateDLL.h"
 #include "Iedk.h"
@@ -89,154 +87,61 @@ void setMentalCommandActions(int, IEE_MentalCommandAction_t);
 ulong listAction = 0; //list Action
 
 
-std::string profileNameForLoading = "/media/shanty/New Volume/AM477/Project/Profiles/profile1.emu";//"C:/1/profile1.emu";
-std::string profileNameForSaving = "/media/shanty/New Volume/AM477/Project/Profiles/profile1.emu";//"C:/1/profile1.emu";"C:/1/profile1.emu";
+std::string profileNameForLoading = "E:\\community-sdk-master\\examples_basic\\C++\\Debug";//"C:/1/profile1.emu";
+std::string profileNameForSaving = "E:\\community-sdk-master\\examples_basic\\C++\\Debug";//"C:/1/profile1.emu";"C:/1/profile1.emu";
 
-typedef EmoEngineEventHandle(*FNPTR)();
-typedef int(*FNPTR1)(EmoEngineEventHandle);
-typedef IEE_Event_t(*FNPTR2)(EmoEngineEventHandle);
-typedef int(*FNPTR3)(EmoEngineEventHandle, unsigned int*);
-typedef EmoStateHandle(*FNPTR4)();
-typedef int(*FNPTR5)(EmoEngineEventHandle, EmoStateHandle);
-typedef IEE_MentalCommandAction_t(*FNPTR6)(EmoStateHandle);
-typedef float(*FNPTR7)(EmoStateHandle);
-typedef int(*FN_FINAL)();
-typedef void(*FNPTR8)(EmoStateHandle);
-typedef void(*FNPTR9)(EmoEngineEventHandle);
-typedef int(*FNPTR10)(unsigned int, const char*);
-typedef int(*FNPTR11)(unsigned int, unsigned long*);
-typedef IEE_MentalCommandEvent_t(*FNPTR12)(EmoEngineEventHandle);
-typedef int(*FNPTR13)(unsigned int, IEE_MentalCommandAction_t);
-typedef int(*FNPTR14)(unsigned int, IEE_MentalCommandTrainingControl_t);
-typedef int(*FNPTR15)(unsigned int, unsigned long);
-//typedef 
-int main(int argc, char** argv) {
-/*SHANTY MOD FOR OPENING DLL FILES*******************************************************************************/
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so.3.3.3", RTLD_NOW );
-	if (!hinst)
-	{
-		std::cout << "Could not load dll"<<endl;
-		return EXIT_FAILURE;
-	}
 
-	FNPTR4 IEE_EmoEngineEventCreate = (FNPTR4)dlsym(hinst, "IEE_EmoEngineEventCreate");
-	if (!IEE_EmoEngineEventCreate)
-	{
-		std::cout << "IEE_EmoEngineEventCreate loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR IEE_EmoStateCreate = (FNPTR)dlsym(hinst, "IEE_EmoStateCreate");
-	if (!IEE_EmoStateCreate)
-	{
-		std::cout << "IEE_EmoStateCreate loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR IEE_EngineConnect = (FNPTR)dlsym(hinst, "IEE_EngineConnect");
-	if (!IEE_EngineConnect)
-	{
-		std::cout << "IEE_EngineConnect loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR1 IEE_EngineGetNextEvent = (FNPTR1)dlsym(hinst, "IEE_EngineGetNextEvent");
-	if (!IEE_EngineGetNextEvent)
-	{
-		std::cout << "IEE_EngineGetNextEvent loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR2 IEE_EmoEngineEventGetType = (FNPTR2)dlsym(hinst, "IEE_EmoEngineEventGetType");
-	if (!IEE_EmoEngineEventGetType)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR3 IEE_EmoEngineEventGetUserId = (FNPTR3)dlsym(hinst, "IEE_EmoEngineEventGetUserId");
-	if (!IEE_EmoEngineEventGetUserId)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR5 IEE_EmoEngineEventGetEmoState = (FNPTR5)dlsym(hinst, "IEE_EmoEngineEventGetEmoState");
-	if (!IEE_EmoEngineEventGetEmoState)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR6 IS_MentalCommandGetCurrentAction = (FNPTR6)dlsym(hinst, "IS_MentalCommandGetCurrentAction");
-	if (!IS_MentalCommandGetCurrentAction)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR7 IS_MentalCommandGetCurrentActionPower = (FNPTR7)dlsym(hinst, "IS_MentalCommandGetCurrentActionPower");
-	if (!IS_MentalCommandGetCurrentActionPower)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
-	FN_FINAL IEE_EngineDisconnect = (FN_FINAL)dlsym(hinst, "IEE_EngineDisconnect");
-	if (!IEE_EngineDisconnect)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR8 IEE_EmoStateFree = (FNPTR8)dlsym(hinst, "IEE_EmoStateFree");
-	if (!IEE_EmoStateFree)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
-	FNPTR9 IEE_EmoEngineEventFree = (FNPTR9)dlsym(hinst, "IEE_EmoEngineEventFree");
-	if (!IEE_EmoEngineEventFree)
-	{
-		std::cout << "IEE_EmoEngineEventGetType loading failed";
-		return EXIT_FAILURE;
-	}
+EmoEngineEventHandle eEvent;
+EmoStateHandle eState;
+BOOL APIENTRY DllMain(HANDLE hModule,
+	DWORD  ul_reason_for_call,
+	LPVOID lpReserved)
+{
+	return TRUE;
+}
+
+DLLEXPORT int initEngine()
+{
 	
-	/*SHANTY MOD FOR LOAD LIBRARY STUFF ENDS***********************************************************************/
-	EmoEngineEventHandle eEvent       = IEE_EmoEngineEventCreate();
-	EmoStateHandle eState             = IEE_EmoStateCreate();
-	unsigned int userID	              = 0;
+	 eEvent = IEE_EmoEngineEventCreate();
+	eState = IEE_EmoStateCreate();
+	
 	const unsigned short composerPort = 1726;
-	int option = 0;
-	int state  = 0;
+	//int option = 0;
+	int state = 0;
 	bool isUserAdded = false;
 	std::string input;
 	
-    std::cout << "===================================================================" << "\n";
-    std::cout << "   Example to use MentalCommand for training with profile functions" << "\n";
-    std::cout << "===================================================================" << "\n";
-    std::cout << "1. Load profile and show MentalCommand actions		             " << "\n";
-    std::cout << "2. Train MentalCommand Actions						             " << "\n";
-	std::cout << ">> ";
-
-	std::getline(std::cin, input, '\n');
-	option = atoi(input.c_str());
-
-	if (IEE_EngineConnect() != 0) 
-	{
-		std::cout<<IEE_EngineConnect()<<endl;
-		throw std::runtime_error("Emotiv Engine start up failed.");
+	if (IEE_EngineRemoteConnect("127.0.0.1", 1726) != 0) {
+		throw std::runtime_error("Emotiv Driver start up failed.");
+		return 1;
 	}
-		
-	while (!_kbhit()) {
-		state = IEE_EngineGetNextEvent(eEvent);
-		std::cout<<state<<endl;
-		// New event needs to be handled
+	else std::cout << "Emotiv Engine Connected!" << endl;
+	return 0;
+}
+
+DLLEXPORT void closeEngine()
+{
+	IEE_EngineDisconnect();
+	IEE_EmoStateFree(eState);
+	IEE_EmoEngineEventFree(eEvent);
+}
+
+DLLEXPORT int getCommands(int option)
+{
+	unsigned int userID = 0;
+
+		int state = IEE_EngineGetNextEvent(eEvent);
+
 		if (state == 0) {
 
 			IEE_Event_t eventType = IEE_EmoEngineEventGetType(eEvent);
 			IEE_EmoEngineEventGetUserId(eEvent, &userID);
-			std::cout<<"eventType: "<<eventType<<endl;
+
 			switch (eventType) {
 				case IEE_UserAdded:
 				{
-                    cout << endl << "New user " << userID <<" added"  << endl;
 
-					if (option == 1)
-					{
-						loadProfile(userID);
-                        showTrainedActions(userID);
-					}
 					if (option == 2)
 					{	
                         setActiveActions(userID);
@@ -254,17 +159,19 @@ int main(int argc, char** argv) {
 					
 				case IEE_EmoStateUpdated:
 				{
-					std::cout<<"EmoStateUpdated"<<endl;
 					IEE_EmoEngineEventGetEmoState(eEvent, eState);
 					if (option == 1)
 					{
 						showCurrentActionPower(eState);
 						IEE_MentalCommandAction_t eeAction = IS_MentalCommandGetCurrentAction(eState);
 						float actionPower = IS_MentalCommandGetCurrentActionPower(eState);
-						std::cout << eeAction << "\t" << actionPower << endl;
-						//int ret = sprintf(data, "%f", actionPower);
-						
-						
+						if (eeAction!= 1) {
+							std::cout << "Clench: " << actionPower << endl;
+							return 1;
+						}
+						else
+							return 0;
+											
 					}
 					break;
 				}
@@ -279,12 +186,9 @@ int main(int argc, char** argv) {
 					break;
 			}
 		}
-	}
-	
+	//}
 
-	IEE_EngineDisconnect();
-	IEE_EmoStateFree(eState);
-	IEE_EmoEngineEventFree(eEvent);
+	
 
 	return 0;
 }
@@ -292,13 +196,10 @@ int main(int argc, char** argv) {
 
 
 void loadProfile(int userID)
-{			
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so", RTLD_LAZY );
-	FNPTR10 IEE_LoadUserProfile = (FNPTR10)dlsym(hinst, "IEE_LoadUserProfile");
+{
 	if (!IEE_LoadUserProfile)
 	{
 		std::cout << "IEE_LoadUserProfile loading failed";
-		//return EXIT_FAILURE;
 	}
 	if (IEE_LoadUserProfile(userID, profileNameForLoading.c_str()) == EDK_OK)
         std::cout << "Load Profile : done" << std::endl;
@@ -322,12 +223,9 @@ const char *byte_to_binary(long x)
 
 void showTrainedActions(int userID)
 {
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so", RTLD_LAZY );
-	FNPTR11 IEE_MentalCommandGetTrainedSignatureActions = (FNPTR11)dlsym(hinst, "IEE_MentalCommandGetTrainedSignatureActions");
 	if (!IEE_MentalCommandGetTrainedSignatureActions)
 	{
 		std::cout << "IEE_MentalCommandGetTrainedSignatureActions loading failed";
-		//return EXIT_FAILURE;
 	}
 	unsigned long pTrainedActionsOut = 0;
     IEE_MentalCommandGetTrainedSignatureActions(userID, &pTrainedActionsOut);
@@ -337,10 +235,6 @@ void showTrainedActions(int userID)
 
 void showCurrentActionPower(EmoStateHandle eState)
 {
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so", RTLD_LAZY );
-	FNPTR6 IS_MentalCommandGetCurrentAction = (FNPTR6)dlsym(hinst, "IS_MentalCommandGetCurrentAction");
-	FNPTR7 IS_MentalCommandGetCurrentActionPower = (FNPTR7)dlsym(hinst, "IS_MentalCommandGetCurrentActionPower");
-
 	IEE_MentalCommandAction_t eeAction = IS_MentalCommandGetCurrentAction(eState);
 	float actionPower = IS_MentalCommandGetCurrentActionPower(eState);
 
@@ -354,10 +248,9 @@ void showCurrentActionPower(EmoStateHandle eState)
 
 void setActiveActions(int userID)
 {
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so", RTLD_LAZY );
-	FNPTR15  IEE_MentalCommandSetActiveActions = (FNPTR15)dlsym(hinst, " IEE_MentalCommandSetActiveActions");
-	ulong action1 = (ulong)1;//IEE_MentalCommandAction_t::MC_PUSH;
-    ulong action2 = (ulong)2;//IEE_MentalCommandAction_t::MC_PULL;
+
+	ulong action1 = (ulong)IEE_MentalCommandAction_t::MC_PUSH;
+    ulong action2 = (ulong)IEE_MentalCommandAction_t::MC_PULL;
     listAction = action1 | action2;
 
     int errorCode = EDK_OK;
@@ -372,9 +265,7 @@ void setActiveActions(int userID)
 
 void setMentalCommandActions(int headsetID,IEE_MentalCommandAction_t action)
 {
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so", RTLD_LAZY );
-	FNPTR13  IEE_MentalCommandSetTrainingAction = (FNPTR13)dlsym(hinst, " IEE_MentalCommandSetTrainingAction");
-	FNPTR14 IEE_MentalCommandSetTrainingControl = (FNPTR14)dlsym(hinst, "IEE_MentalCommandSetTrainingControl");
+
 	int errorCode = IEE_MentalCommandSetTrainingAction(headsetID, action);
     errorCode = IEE_MentalCommandSetTrainingControl(headsetID, MC_START);
 
@@ -388,8 +279,6 @@ void setMentalCommandActions(int headsetID,IEE_MentalCommandAction_t action)
 
 void trainMentalCommandActions(int headsetID)
 {
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so", RTLD_LAZY );
-	FNPTR10  IEE_SaveUserProfile = (FNPTR10)dlsym(hinst, "IEE_SaveUserProfile");
 	
 	if (listAction & MC_PUSH)
     {
@@ -413,11 +302,7 @@ void trainMentalCommandActions(int headsetID)
 
 void handleMentalCommandEvent(std::ostream& os, EmoEngineEventHandle MentalCommandEvent) {
 
-	void* hinst = dlopen("/media/shanty/New Volume/community-sdk-master/bin/linux64/libedk.so", RTLD_LAZY );
-	FNPTR3 IEE_EmoEngineEventGetUserId = (FNPTR3)dlsym(hinst, "IEE_EmoEngineEventGetUserId");
-	FNPTR12 IEE_MentalCommandEventGetType = (FNPTR12)dlsym(hinst, "IEE_MentalCommandEventGetType");
-	FNPTR13  IEE_MentalCommandSetTrainingAction = (FNPTR13)dlsym(hinst, " IEE_MentalCommandSetTrainingAction");
-	FNPTR14 IEE_MentalCommandSetTrainingControl = (FNPTR14)dlsym(hinst, "IEE_MentalCommandSetTrainingControl");
+
 	unsigned int userID = 0;
 	IEE_EmoEngineEventGetUserId(MentalCommandEvent, &userID);
 	IEE_MentalCommandEvent_t eventType = IEE_MentalCommandEventGetType(MentalCommandEvent);
